@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Happy Birthday My kaju katli</title>
+  <style>
+    :root{
+      --bg: #ffffff;
+      --card: #ffffff;
+      --accent: #d7f7c6;    /* pastel lime */
+      --muted: #c99aa3;     /* dusty-rose */
+      --border: #f3d6e8;
+      --text-main: #123;
+      --tile-front: #fff;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:"Times New Roman", Times, serif;
+      background:var(--bg);
+      color:var(--text-main);
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding:28px;
+    }
+    .wrap{
+      width:100%;
+      max-width:900px;
+      background:var(--card);
+      border-radius:16px;
+      padding:34px;
+      border:1px solid var(--border);
+      box-shadow:0 18px 40px rgba(0,0,0,0.04);
+    }
+    .intro{display:flex; gap:18px; align-items:flex-start;}
+    .emoji{font-size:48px; margin-right:6px}
+    h1{margin:0;font-size:36px;line-height:1.02;color:#2f5f33;letter-spacing:0.2px;}
+    #sub{margin-top:10px;color:var(--muted);font-size:18px}
+
+    /* hero image & fade */
+    #openImage{display:none; margin-top:18px; text-align:center;}
+    #openImage img{
+      max-width:100%;
+      border-radius:12px;
+      box-shadow:0 12px 36px rgba(0,0,0,0.08);
+      opacity:0;
+      transform:scale(.98);
+      transition:opacity 1.2s ease, transform 1.2s ease;
+      border:6px solid rgba(243,214,232,0.45);
+    }
+    #openImage.show img{ opacity:1; transform:scale(1); }
+
+    .open-btn{
+      display:inline-block;
+      margin-top:16px;
+      padding:12px 26px;
+      border-radius:14px;
+      background:linear-gradient(90deg,var(--accent), #e6fbe0);
+      color:#2f4b2f;
+      border:1px solid rgba(55,100,60,0.06);
+      font-weight:700;
+      font-size:16px;
+      cursor:pointer;
+      box-shadow:0 10px 20px rgba(215,247,198,0.18);
+    }
+
+    .grid{margin-top:26px; display:none}
+    .tiles{
+      display:grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap:14px;
+      margin-top:20px;
+    }
+    @media (max-width:740px){ .tiles{ grid-template-columns: repeat(4, 1fr); } .wrap{ padding:20px } h1{ font-size:28px } }
+
+    .tile{
+      background:transparent;
+      border-radius:12px;
+      padding:12px;
+      text-align:center;
+      cursor:pointer;
+      user-select:none;
+      perspective:1000px;
+      position:relative;
+      min-height:84px;
+    }
+    .label{ font-size:16px; color:var(--muted); margin-bottom:8px }
+
+    .face{
+      width:100%;
+      height:84px;
+      position:relative;
+      transform-style:preserve-3d;
+      transition:transform .6s cubic-bezier(.2,.9,.3,1);
+      border-radius:10px;
+    }
+    .tile .front, .tile .back{
+      position:absolute; inset:0; display:flex; align-items:center; justify-content:center; backface-visibility:hidden; border-radius:10px; padding:10px; box-shadow:0 10px 18px rgba(0,0,0,0.04);
+    }
+    .tile .front{
+      background:var(--tile-front);
+      transform: rotateX(0deg);
+      font-size:28px;
+      color: #2f5f33;
+      border:1px solid rgba(243,214,232,0.35);
+    }
+    .tile .back{
+      transform: rotateX(180deg);
+      background: linear-gradient(180deg, rgba(215,247,198,0.9), rgba(243,214,232,0.25));
+      color: #2f5f33;
+      font-size:15px;
+      text-align:center;
+      padding:12px;
+      border:1px solid rgba(215,247,198,0.3);
+      white-space:pre-wrap;
+    }
+
+    .tile.revealed .face { transform: rotateX(180deg); }
+
+    .corner-badge{
+      position:absolute; right:8px; bottom:8px; background:var(--accent); color:#123; font-weight:700; padding:6px 8px; border-radius:10px; font-size:13px; box-shadow:0 6px 12px rgba(0,0,0,0.06); cursor:pointer; transform:translateY(8px); opacity:0; transition:all 260ms ease;
+    }
+    .tile.revealed .corner-badge{ opacity:1; transform:translateY(0); }
+    .tile:hover .face{ transform: translateY(-4px) }
+
+    .hint{ margin-top:12px; color:var(--muted) }
+    footer{ margin-top:18px; color:var(--muted); font-size:13px }
+
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="intro">
+      <div class="emoji">🎁</div>
+      <div style="flex:1">
+        <!-- EDIT THIS headline (visible on the page) -->
+        <h1 id="headline">Look who’s turning 21… but will always be my lil baby.</h1>
+        <p id="sub">Bkl Pura padhiyo Pyaar se likha hai DIL SE, Love youu Mwahhhh</p>
+
+        <!-- Image placeholder: replace YOUR_IMAGE_URL_HERE with your image URL -->
+        <div id="openImage" aria-hidden="true" >
+          <img id="heroImg" src="https://drive.google.com/file/d/16lGSmiaXBmfAPJYTYK2JSR67EPCfuCmr/view?usp=sharing" alt="Birthday Image preview" />
+        </div>
+
+        <div style="margin-top:12px">
+          <button class="open-btn" id="openBtn" aria-label="Open">Open</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid" id="gridArea" aria-hidden="true">
+      <div class="tiles" id="tiles" role="list" aria-label="21 messages"></div>
+
+      <div class="hint">Tip: click a numbered tile to flip it and reveal the note. Use the corner badge to move to the next note.</div>
+      <div class="grid-footer">❤️</div>
+    </div>
+  </div>
+
+<script>
+/* ------------------ EDIT MESSAGES HERE ------------------
+ Replace the 21 strings below with your notes.
+ Each entry can be multi-line (use backticks). Tile 1 uses MESSAGES[0], tile 2 uses MESSAGES[1], ... tile 21 uses MESSAGES[20].
+---------------------------------------------------------*/
+let MESSAGES = [
+`You are my sunshine
+Always brightening my day`,
+
+`I love your smile
+It warms my heart`,
+
+`Thank you for all the hugs
+And silly moments`,
+
+`You make life sweeter
+Just by being you`,
+
+`I’m proud of you
+Every single day`,
+
+`You’re my best friend
+My favourite person`,
+
+`I love your laugh
+It’s my favourite sound`,
+
+`You make me feel safe
+I love you so much`,
+
+`Thanks for being you
+Unapologetically kind`,
+
+`You’re beautiful inside & out
+Never forget that`,
+
+`Every day with you
+Is a little adventure`,
+
+`I cherish our late-night talks
+And sleepy cuddles`,
+
+`You’re my calm & my chaos
+Perfectly balanced`,
+
+`I love your little quirks
+They make you, you`,
+
+`I choose you daily
+And always will`,
+
+`You make me better
+Thank you for that`,
+
+`My favorite memories
+Are the ones with you`,
+
+`You’re the reason I smile
+Every single morning`,
+
+`I admire your kindness
+And gentle strength`,
+
+`Happy 21st, love
+Here’s to us`,
+
+`Forever yours
+Happy birthday 💛`
+];
+/* ------------------------------------------------------- */
+
+const openBtn = document.getElementById('openBtn');
+const gridArea = document.getElementById('gridArea');
+const tiles = document.getElementById('tiles');
+
+function popConfetti(el){
+  const count = 8;
+  for(let i=0;i<count;i++){
+    const dot = document.createElement('div');
+    dot.style.position = 'absolute';
+    dot.style.width = dot.style.height = (6 + Math.random()*6) + 'px';
+    dot.style.borderRadius = '50%';
+    dot.style.left = (50 + (Math.random()-0.5)*140) + '%';
+    dot.style.top = (50 + (Math.random()-0.5)*40) + '%';
+    dot.style.opacity = '0.95';
+    dot.style.transform = 'translate(-50%,-50%)';
+    dot.style.pointerEvents = 'none';
+    dot.style.background = ['#d7f7c6','#ffe1f0','#f7e6ff','#ffdfe6','#e6f9ff'][Math.floor(Math.random()*5)];
+    el.appendChild(dot);
+    setTimeout(()=>{ dot.style.transition='all 700ms ease'; dot.style.top = (Math.random()*120) + '%'; dot.style.opacity='0'; dot.style.transform='translate(-50%,-50%) scale(.1)';}, 10);
+    setTimeout(()=>dot.remove(),900);
+  }
+}
+
+function escapeHtml(str){
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+/* Build tiles from MESSAGES */
+function buildTiles(msgs){
+  tiles.innerHTML = '';
+  for(let i=0;i<21;i++){
+    const tile = document.createElement('div');
+    tile.className = 'tile';
+    tile.dataset.index = i;
+    tile.style.position = 'relative';
+
+    const label = document.createElement('div');
+    label.className = 'label';
+    label.textContent = (i+1);
+
+    const face = document.createElement('div');
+    face.className = 'face';
+
+    const front = document.createElement('div'); front.className='front'; front.textContent = (i+1);
+    const back = document.createElement('div'); back.className='back';
+    back.innerHTML = msgs[i] ? escapeHtml(msgs[i]).replace(/\n/g,'<br>') : '';
+
+    face.appendChild(front); face.appendChild(back);
+
+    tile.appendChild(label);
+    tile.appendChild(face);
+
+    const badge = document.createElement('div');
+    badge.className = 'corner-badge';
+    badge.textContent = (i+2) <= 21 ? (i+2) : '';
+    badge.style.display = ((i+1) <= 21 && (i+2) <=21) ? 'block' : 'none';
+    badge.addEventListener('click',(e)=>{
+      e.stopPropagation();
+      const nextIndex = i+1;
+      const nextTile = tiles.querySelector('.tile[data-index="'+ nextIndex +'"]');
+      if(nextTile && !nextTile.classList.contains('revealed')){
+        nextTile.classList.add('revealed');
+        popConfetti(nextTile);
+      }
+    });
+    tile.appendChild(badge);
+
+    tile.addEventListener('click', ()=>{
+      if(tile.classList.contains('revealed')) return;
+      tile.classList.add('revealed');
+      popConfetti(tile);
+
+      const nextIdx = i+1;
+      const nextTile = tiles.querySelector('.tile[data-index="'+ nextIdx +'"]');
+      if(nextTile && !nextTile.classList.contains('revealed')){
+        // show badge (CSS handles appearance)
+        badge.style.opacity = '1';
+        setTimeout(()=>{ 
+          if(!nextTile.classList.contains('revealed')){ 
+            nextTile.classList.add('revealed'); 
+            popConfetti(nextTile);
+          } 
+        }, 900);
+      }
+    });
+
+    tiles.appendChild(tile);
+  }
+}
+
+/* Show image, then grid and build tiles */
+openBtn.addEventListener('click', ()=>{
+  document.querySelector('.intro').scrollIntoView({behavior:'smooth'});
+
+  const imgBox = document.getElementById('openImage');
+  if(imgBox){
+    imgBox.style.display = 'block';
+    requestAnimationFrame(()=> setTimeout(()=> imgBox.classList.add('show'), 30));
+  }
+
+  setTimeout(()=>{
+    gridArea.style.display = 'block';
+    buildTiles(MESSAGES);
+  }, 1500);
+
+  openBtn.disabled = true;
+  openBtn.textContent = 'Opened 🎉';
+});
+
+/* Optional: clicking headline reveals all quickly */
+let revealing = false;
+document.getElementById('headline').addEventListener('click', async ()=>{
+  if(!gridArea.style.display) return;
+  if(revealing) return;
+  revealing = true;
+  const ts = document.querySelectorAll('.tile');
+  for(let i=0;i<ts.length;i++){
+    await new Promise(r=>setTimeout(r,120));
+    ts[i].classList.add('revealed');
+    popConfetti(ts[i]);
+  }
+  revealing = false;
+});
+</script>
+</body>
+</html>
