@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>21 Notes — Grid</title>
+<style>
+  body{font-family:"Times New Roman",serif;background:#fff8fa;margin:0;padding:24px;text-align:center;color:#2c2c2c;}
+  header{margin-bottom:14px;}
+  h2{font-size:1.6rem;margin:4px 0 10px;}
+  #grid{width:92%;max-width:560px;margin:18px auto;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  .box{background:#fff;border:1px solid #ccc;border-radius:10px;padding:18px 0;font-size:1.25rem;cursor:pointer;text-decoration:none;color:inherit;display:flex;align-items:center;justify-content:center;}
+  .box:hover{transform:translateY(-4px);transition:transform .12s ease}
+  #backHome{display:inline-block;margin-top:18px;padding:8px 18px;border-radius:10px;background:#fff;border:1px solid #ccc;text-decoration:none;color:inherit;}
+</style>
+</head>
+<body>
+<header>
+  <h2>Pick a box — 1 to 21</h2>
+  <div style="font-size:.9rem;color:#666">Each box opens a note (and confetti on the note page)</div>
+</header>
+
+<div id="grid"></div>
+
+<a id="backHome" href="index.html">← Back to home</a>
+
+<script>
+// Generate 21 boxes as links to note.html?i={index}
+const grid = document.getElementById('grid');
+for (let i=1;i<=21;i++){
+  const a = document.createElement('a');
+  a.className = 'box';
+  a.href = `note.html?i=${i-1}`; // note index 0..20
+  a.textContent = i;
+  grid.appendChild(a);
+}
+</script>
+</body>
+</html>
